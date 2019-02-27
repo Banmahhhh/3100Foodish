@@ -1,0 +1,72 @@
+{% extends "base.html" %}
+
+{% block content %}
+    <h1>Post your dish:</h1>
+    <form action="" method="post">
+        {{ form.hidden_tag() }}
+        <p>
+            {{ form.dishName.label }}<br>
+            {{ form.dishName(size=32) }}<br>
+            {% for error in form.dishName.errors %}
+            <span style="color: red;">[{{ error }}]</span>
+            {% endfor %}
+        </p>
+        <p>
+            {{ form.dishPrice.label }}<br>
+            {{ form.dishPrice(size=32) }}<br>
+            {% for error in form.dishPrice.errors %}
+            <span style="color: red;">[{{ error }}]</span>
+            {% endfor %}
+        </p>
+        <p>
+            {{ form.dishPhoto.label }}<br>
+            {{ form.dishPhoto(size=100) }}<br>
+            {% for error in form.dishPhoto.errors %}
+            <span style="color: red;">[{{ error }}]</span>
+            {% endfor %}
+        </p>
+        <p>
+            {{ form.dishDeliveryTime.label }}<br>
+            {{ form.dishDeliveryTime(size=32) }}<br>
+            {% for error in form.dishDeliveryTime.errors %}
+            <span style="color: red;">[{{ error }}]</span>
+            {% endfor %}
+        </p>
+        <p>
+            {{ form.dishExpectedOrderNumber.label }}<br>
+            {{ form.dishExpectedOrderNumber(size=32) }}<br>
+            {% for error in form.dishExpectedOrderNumber.errors %}
+            <span style="color: red;">[{{ error }}]</span>
+            {% endfor %}
+        </p>
+        <p>
+            {{ form.dishFlavour.label }}<br>
+            {{ form.dishFlavour(size=64) }}<br>
+            {% for error in form.dishFlavour.errors %}
+            <span style="color: red;">[{{ error }}]</span>
+            {% endfor %}
+        </p>
+        <p>
+            {{ form.dishTaboo.label }}<br>
+            {{ form.dishTaboo(size=64) }}<br>
+            {% for error in form.dishTaboo.errors %}
+            <span style="color: red;">[{{ error }}]</span>
+            {% endfor %}
+        </p>
+        <p>
+            {{ form.dishDescription.label }}<br>
+            {{ form.dishDescription(cols=32, rows=4) }}<br>
+            {% for error in form.dishDescription.errors %}
+            <span style="color: red;">[{{ error }}]</span>
+            {% endfor %}
+        </p>
+        <p>
+            {{ form.dishPickUpLocation.label }}<br>
+            {{ form.dishPickUpLocation(cols=32, rows=1) }}<br>
+            {% for error in form.dishPickUpLocation.errors %}
+            <span style="color: red;">[{{ error }}]</span>
+            {% endfor %}
+        </p>
+        <p>{{ form.submit() }}</p>
+    </form>
+{% endblock %}

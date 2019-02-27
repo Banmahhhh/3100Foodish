@@ -1,0 +1,14 @@
+<table>
+    <tr valign="top">
+        <td><img src="{{ dish.photo }}" width="128" height="128"></td>
+    </tr>
+    <tr valign="top">
+        <td>{{ dish.dish_name }}</td>
+    </tr>
+    <tr valign="top">
+        <td>price: {{ dish.price }}</td>
+        <td>chef: {{ dish.seller.username }}</td>
+    </tr>
+</table>
+<a href="{{ url_for('dish_info', dishname=dish.dish_name) }}">View details</a>
+<br>
