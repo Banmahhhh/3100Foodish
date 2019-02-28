@@ -1,0 +1,25 @@
+{% extends "base.html" %}
+
+{% block content %}
+    <h1>Please fill in the following fields to make the order:</h1>
+    <form action="" method="post">
+        {{ form.hidden_tag() }}
+        <p>{{ dish.dish_name }}<br></p>
+        <p><img src="{{ dish.photo }}" width="128" height="128"></p>
+        <p>
+            {{ form.quantity.label }}<br>
+            {{ form.quantity(size=32) }}<br>
+            {% for error in form.quantity.errors %}
+            <span style="color: red;">[{{ error }}]</span>
+            {% endfor %}
+        </p>
+        <p>
+            {{ form.contact.label }}<br>
+            {{ form.contact(size=32) }}<br>
+            {% for error in form.contact.errors %}
+            <span style="color: red;">[{{ error }}]</span>
+            {% endfor %}
+        </p>
+        <p>{{ form.submit() }}</p>
+    </form>
+{% endblock %}

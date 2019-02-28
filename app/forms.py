@@ -37,3 +37,9 @@ class DishForm(FlaskForm):
     dishDescription = TextAreaField('Dish description', validators=[Length(min=1, max=200)])
     dishPickUpLocation = TextAreaField('Dish pick up location', validators=[Length(min=1, max=140)])
     submit = SubmitField('Submit')
+
+class OrderForm(FlaskForm):
+    quantity = IntegerField('The quantity you want to order:', validators=[DataRequired()])
+    contact = StringField('Your contact number:', validators=[DataRequired()])
+    submit = SubmitField('Submit')
+

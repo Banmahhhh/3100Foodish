@@ -6,7 +6,7 @@ from app.models import User, Dish, Order
 from flask_login import login_required
 from flask import request, url_for
 from werkzeug.urls import url_parse
-from app.forms import RegistrationForm, DishForm
+from app.forms import RegistrationForm, DishForm, OrderForm
 
 
 @app.route('/')
@@ -73,3 +73,22 @@ def post_dish():
 def dish_info(dishname):
     dish = Dish.query.filter_by(dish_name=dishname).first_or_404()
     return render_template('dish_info.html', dish=dish)
+
+@app.route('/make_order/<dishname>', methods=['GET', 'POST'])
+@login_required
+def make_order(dishname):
+    dish = Dish.query.filter_by(dish_name=dishname).first_or_404()
+    form = OrderForm()
+    if form.validate_on_submit():
+        order = Order(quantity=form.quantity.data,
+        status=1, dish=dish, buyer=current_user)
+        db.session.add(order)
+        db.session.commit()
+        flash('Your order is successful!')
+        return redirect(url_for('index'))
+    return render_template('order.html', dish=dish, form=form)
+
+
+    
+    
+    
