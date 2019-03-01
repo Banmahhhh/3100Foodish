@@ -1,0 +1,8 @@
+{% extends "base.html" %}
+
+{% block content %}
+    <p><h2>Your search results:</h2></p><br>
+    {% for dish in results %}
+        {% include 'dish_posts.html' %}
+    {% endfor %}
+{% endblock %}

@@ -14,6 +14,6 @@
     <p>potential taboo: {{ dish.potential_taboo }}</p>
     <p>description: {{ dish.description }}</p>
     <p>pick up location: {{ dish.pick_up_location }}</p>
-    <p>chef: {{ dish.seller.username }}</p>
+    <p>chef: <a href="{{ url_for('user', username=dish.seller.username) }}">{{ dish.seller.username }}</a></p>
     <a href="{{ url_for('make_order', dishname=dish.dish_name) }}">Make an order</a>
 {% endblock %}

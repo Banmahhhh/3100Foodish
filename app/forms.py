@@ -43,3 +43,13 @@ class OrderForm(FlaskForm):
     contact = StringField('Your contact number:', validators=[DataRequired()])
     submit = SubmitField('Submit')
 
+class SearchBox(FlaskForm):
+    content = StringField('Search by food tags:', validators=[DataRequired()])
+    submit = SubmitField('Search')
+
+class EditProfileForm(FlaskForm):
+    username = StringField('Username:', validators=[DataRequired()])
+    head_portrait = StringField('image link of your head portrait:')
+    self_introduction = TextAreaField('self introduction:', validators=[Length(min=0, max=400)])
+    submit = SubmitField('Submit')
+

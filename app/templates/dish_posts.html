@@ -7,7 +7,11 @@
     </tr>
     <tr valign="top">
         <td>price: {{ dish.price }}</td>
-        <td>chef: {{ dish.seller.username }}</td>
+        <td>chef: <a href="{{ url_for('user', username=dish.seller.username) }}">{{ dish.seller.username }}</a></td>
+    </tr>
+    <tr valign="top">
+        <td>expected number of orders: {{ dish.expected_order_number }}</td>
+        <td>current number of orders: {{ dish.current_order_number }}</td>
     </tr>
 </table>
 <a href="{{ url_for('dish_info', dishname=dish.dish_name) }}">View details</a>

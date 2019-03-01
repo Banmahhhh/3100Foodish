@@ -6,15 +6,22 @@ from app.models import User, Dish, Order
 from flask_login import login_required
 from flask import request, url_for
 from werkzeug.urls import url_parse
-from app.forms import RegistrationForm, DishForm, OrderForm
+from app.forms import RegistrationForm, DishForm, OrderForm, SearchBox, EditProfileForm
 
 
-@app.route('/')
-@app.route('/index')
+@app.route('/', methods=['GET', 'POST'])
+@app.route('/index', methods=['GET', 'POST'])
 @login_required
 def index():
     dishes=Dish.query.all()
-    return render_template('index.html', title='Home', dishes=dishes)
+    form=SearchBox()
+    if form.validate_on_submit():
+        results = Dish.query.filter(Dish.dish_name.like("%"+form.content.data+"%")).all()
+        if results == []:
+            flash('No results match.')
+        else:
+            return render_template('search.html', title='Home', results=results)
+    return render_template('index.html', title='Home', dishes=dishes, form=form)
 
 @app.route('/login', methods=['GET', 'POST'])
 def login():
@@ -82,13 +89,49 @@ def make_order(dishname):
     if form.validate_on_submit():
         order = Order(quantity=form.quantity.data,
         status=1, dish=dish, buyer=current_user)
+        dish.current_order_number+=1
         db.session.add(order)
         db.session.commit()
         flash('Your order is successful!')
         return redirect(url_for('index'))
     return render_template('order.html', dish=dish, form=form)
 
-
+@app.route('/user/<username>')
+@login_required
+def user(username):
+    user = User.query.filter_by(username=username).first_or_404()
+    return render_template('user.html', user=user)
     
+@app.route('/user/chef_dishes/<username>')
+@login_required
+def chef_dishes(username):
+    user = User.query.filter_by(username=username).first_or_404()
+    chef_dishes = Dish.query.join(User).filter(User.username==username).all()
+    return render_template('user.html', user=user, chef_dishes=chef_dishes)
+
+@app.route('/user/customer_orders/<username>')
+@login_required
+def customer_orders(username):
+    user = User.query.filter_by(username=username).first_or_404()
+    orders = Order.query.join(User).filter(User.username==username).all()
+    return render_template('user.html', user=user, orders=orders)
+  
+@app.route('/edit_profile', methods=['GET', 'POST'])
+@login_required
+def edit_profile():
+    form = EditProfileForm()
+    if form.validate_on_submit():
+        current_user.username = form.username.data
+        current_user.head_portrait = form.head_portrait.data
+        current_user.self_introduction = form.self_introduction.data
+        db.session.commit()
+        flash('Your changes have been saved.')
+        return redirect(url_for('edit_profile'))
+    elif request.method == 'GET':
+        form.username.data = current_user.username
+        form.head_portrait.data = current_user.head_portrait  
+        form.self_introduction.data = current_user.self_introduction
+    return render_template('edit_profile.html', title='Edit Profile',
+                           form=form)
     
     
