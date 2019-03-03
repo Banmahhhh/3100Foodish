@@ -53,3 +53,6 @@ class EditProfileForm(FlaskForm):
     self_introduction = TextAreaField('self introduction:', validators=[Length(min=0, max=400)])
     submit = SubmitField('Submit')
 
+class CommentForm(FlaskForm):
+    content = TextAreaField('Your comment:', validators=[Length(min=1, max=200)])
+    submit = SubmitField('Submit')

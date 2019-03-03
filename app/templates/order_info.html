@@ -1,0 +1,32 @@
+{% extends "base.html" %}
+
+{% block content %}
+<h2>dish name: {{ order.dish.dish_name }}</h2>
+<img src="{{ order.dish.photo }}" width="300" height="300">
+<p> order time: {{ order.order_time }}</p>
+<p> order quantity: {{ order.quantity }}</p>
+<p> current order number of the dish: {{ order.dish.current_order_number }}</p>
+<p> order status: {{ order.status }}</p>
+<p> chef: {{ order.dish.seller.username }}</p>
+<p> delivery time: {{ order.dish.deliveryTime }}</p>
+{% if order.comment %} 
+    Your comment: {{ order.comment }}
+{% else %}
+<form action="" method="post">
+    {{ form.hidden_tag() }}
+    <p>
+        {{ form.content.label }}<br>
+        {{ form.content(cols=50, rows=4) }}<br>
+        {% for error in form.content.errors %}
+        <span style="color: red;">[{{ error }}]</span>
+        {% endfor %}
+    </p>
+    <p>{{ form.submit() }}</p>
+</form>
+{% endif %}
+{% if can_cancel %}
+<p><a href="{{ url_for('cancel_by_customer', order_id=order.id) }}">Cancel this order</a></p>
+{% else %}
+<p>You cannot cancel this order because the cancel period has passed.</p>
+{% endif %}
+{% endblock %}

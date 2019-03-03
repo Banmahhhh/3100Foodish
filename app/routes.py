@@ -6,8 +6,8 @@ from app.models import User, Dish, Order
 from flask_login import login_required
 from flask import request, url_for
 from werkzeug.urls import url_parse
-from app.forms import RegistrationForm, DishForm, OrderForm, SearchBox, EditProfileForm
-
+from app.forms import RegistrationForm, DishForm, OrderForm, SearchBox, EditProfileForm, CommentForm
+from datetime import datetime
 
 @app.route('/', methods=['GET', 'POST'])
 @app.route('/index', methods=['GET', 'POST'])
@@ -133,5 +133,30 @@ def edit_profile():
         form.self_introduction.data = current_user.self_introduction
     return render_template('edit_profile.html', title='Edit Profile',
                            form=form)
-    
-    
+
+@app.route('/view_order/<order_id>', methods=['GET','POST'])
+@login_required
+def view_order(order_id):
+    order = Order.query.filter_by(id=int(order_id)).first()
+    form = CommentForm()
+    if (order.dish.deliveryTime-datetime.now()).seconds > 86400:
+        can_cancel=True
+    else:
+        can_cancel=False
+    if form.validate_on_submit():
+        order.comment=form.content.data
+        db.session.commit()
+        flash('Your comment has been saved.')
+    return render_template('order_info.html', user=user, order=order, form=form, can_cancel=can_cancel)
+
+@app.route('/cancel_by_customer/<order_id>', methods=['GET','POST'])
+@login_required
+def cancel_by_customer(order_id):
+    order = Order.query.filter_by(id=int(order_id)).first()
+    if request.method == 'POST':
+        if request.form['submit_button'] == 'Yes':
+            db.session.delete(order)
+            db.session.commit()
+            flash("You have deleted this order.")
+        return redirect(url_for('user',username=current_user.username))
+    return render_template('confirm_cancel.html')
