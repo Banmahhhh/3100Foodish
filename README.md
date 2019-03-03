@@ -10,10 +10,16 @@
 
 03/03/2019 Add make comments and cancel dish by customer functions -- yang zhi lin
 
-## How to commit:
+## How to run it:
 
-$git pull --rebase
-$git push
+1. Clone this repo to your local machine
+2. open terminal, change directory to the folder
+3. 
+```
+$export FLASK_APP=foodish.py
+$flask run
+```
+4.open http://127.0.0.1:5000/
 
 
 
