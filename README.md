@@ -8,6 +8,8 @@
 
 01/03/2019 Implement functions: edit personal profile, view my orders and search functions-- yang zhi lin
 
+03/03/2019 Add make comments and cancel dish by customer functions
+
 ## How to commit:
 
 $git pull --rebase
