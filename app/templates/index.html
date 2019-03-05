@@ -17,4 +17,10 @@
     {% for dish in dishes %}
         {% include 'dish_posts.html' %}
     {% endfor %}
+    {% if prev_url %}
+    <a href="{{ prev_url }}">previous page</a>
+    {% endif %}
+    {% if next_url %}
+    <a href="{{ next_url }}">next page</a>
+    {% endif %}
 {% endblock %}

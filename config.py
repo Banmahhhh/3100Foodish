@@ -7,4 +7,5 @@ class Config(object):
 
     SQLALCHEMY_DATABASE_URI = os.environ.get('DEV_DATABASE_URL') or 'mysql+pymysql://root:123456@localhost/foodish'
     SQLALCHEMY_TRACK_MODIFICATIONS = False
+    POSTS_PER_PAGE = 3
 

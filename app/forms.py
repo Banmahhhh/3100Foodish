@@ -56,3 +56,8 @@ class EditProfileForm(FlaskForm):
 class CommentForm(FlaskForm):
     content = TextAreaField('Your comment:', validators=[Length(min=1, max=200)])
     submit = SubmitField('Submit')
+
+class MessageForm(FlaskForm):
+    message = TextAreaField('Message content:', validators=[
+        DataRequired(), Length(min=0, max=500)])
+    submit = SubmitField('Submit')

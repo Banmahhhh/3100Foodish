@@ -1,0 +1,19 @@
+<table>
+        <tr valign="top">
+            <td>{{ order.dish.dish_name }}</td>
+        </tr>
+        <tr valign="top">
+            <td><img src="{{ order.dish.photo }}" width="128" height="128"></td>
+        </tr>
+        <tr valign="top">
+            <td>quantity: {{ order.quantity }}</td>
+            <td>chef: {{ order.dish.seller.username }}</td>
+        </tr>
+        </tr>
+        <td>
+        <a href="{{ url_for('view_order', order_id=order.id) }}">View its details</a>
+        </td>
+        </tr>
+</table>
+
+        

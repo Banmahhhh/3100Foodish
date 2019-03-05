@@ -14,7 +14,14 @@ class User(UserMixin, db.Model):
     head_portrait = db.Column(db.String(200))
     sales_history=db.relationship('Dish', backref='seller', lazy='dynamic')
     purchasing_history=db.relationship('Order', backref='buyer', lazy='dynamic')
-    
+    messages_sent = db.relationship('Message',
+                                    foreign_keys='Message.sender_id',
+                                    backref='author', lazy='dynamic')
+    messages_received = db.relationship('Message',
+                                        foreign_keys='Message.recipient_id',
+                                        backref='recipient', lazy='dynamic')
+    last_message_read_time = db.Column(db.DateTime)
+
     def __repr__(self):
         return '<User {}>'.format(self.username)
     
@@ -23,7 +30,11 @@ class User(UserMixin, db.Model):
 
     def check_password(self, password):
         return check_password_hash(self.password_hash, password)
-   
+    
+    def new_messages(self):
+        last_read_time = self.last_message_read_time or datetime(1900, 1, 1)
+        return Message.query.filter_by(recipient=self).filter(
+            Message.timestamp > last_read_time).count()
 
 
 class Dish(db.Model):
@@ -49,7 +60,7 @@ class Order(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     quantity=db.Column(db.Integer)
     order_time=db.Column(db.DateTime, index=True, default=datetime.utcnow)
-    status=db.Column(db.Integer)
+    status=db.Column(db.String(100))
     comment=db.Column(db.Text)
     customer_id = db.Column(db.Integer, db.ForeignKey('user.id'))
     dish_id = db.Column(db.Integer, db.ForeignKey('dish.id'))
@@ -59,3 +70,13 @@ class Order(db.Model):
 @login.user_loader
 def load_user(id):
     return User.query.get(int(id))
+
+class Message(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    sender_id = db.Column(db.Integer, db.ForeignKey('user.id'))
+    recipient_id = db.Column(db.Integer, db.ForeignKey('user.id'))
+    body = db.Column(db.String(500))
+    timestamp = db.Column(db.DateTime, index=True, default=datetime.utcnow)
+
+    def __repr__(self):
+        return '<Message {}>'.format(self.body)

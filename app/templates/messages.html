@@ -1,0 +1,36 @@
+{% extends "base.html" %}
+
+{% block content %}
+    <h1>My Messages</h1>
+    {% for msg in messages %}
+    <table>
+        <tr valign="top"> 
+            {% if msg.author is none %}
+                <td>From system administrator:</td>
+            {% else %}
+                {% if msg.author.head_portrait %}
+                <td><img src="{{ msg.author.head_portrait }}" width="64" height="64"></td>
+                {% endif %}
+                <td>name: {{ msg.author.username }}</td>
+            {% endif %}
+            
+        </tr>
+        <tr valign="top">
+            <td>message: {{ msg.body }}</td>
+        </tr>
+        <tr valign="top">
+            <td>sending time: {{ msg.timestamp }}</td>
+        </tr>
+        {% if msg.author is not none %} 
+        <a href="{{ url_for('send_message', recipient=msg.author.username) }}">Reply</a>
+        {% endif %}
+    </table>
+    <br>
+    {% endfor %}
+    {% if prev_url %}
+    <a href="{{ prev_url }}">previous page</a>
+    {% endif %}
+    {% if next_url %}
+    <a href="{{ next_url }}">next page</a>
+    {% endif %}
+{% endblock %}

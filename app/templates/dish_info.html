@@ -15,5 +15,11 @@
     <p>description: {{ dish.description }}</p>
     <p>pick up location: {{ dish.pick_up_location }}</p>
     <p>chef: <a href="{{ url_for('user', username=dish.seller.username) }}">{{ dish.seller.username }}</a></p>
+
+    {% if dish.seller == current_user %}
+    <a href="{{ url_for('cancel_by_chef', dish_id=dish.id) }}">Cancel this dish!</a>
+    {% else %}
     <a href="{{ url_for('make_order', dishname=dish.dish_name) }}">Make an order</a>
+    {% endif %}
+    
 {% endblock %}

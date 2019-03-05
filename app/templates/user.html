@@ -4,32 +4,23 @@
     <h1>User: {{ user.username }}</h1>
     {% if user.head_portrait %}<img src="{{ user.head_portrait }}" width="300" height="300">{% endif %}
     {% if user.self_introduction %}<p>Self introduction:{{ user.self_introduction }}</p>{% endif %}<br>
+    {% if user != current_user %}
+    <p>
+        <a href="{{ url_for('send_message',recipient=user.username) }}">Send private message</a>
+    </p>
+    {% endif %}
     {% if user == current_user %}
     <a href="{{ url_for('chef_dishes', username=user.username) }}">View my orders as a chef</a>
     <br>
     <a href="{{ url_for('customer_orders', username=user.username) }}">View my orders as a customer</a>
     <br>
-    <p><a href="{{ url_for('edit_profile') }}">Edit your profile</a></p>
+    <p><a href="{{ url_for('edit_profile') }}">Edit my profile</a></p>
+    <br>
+    <p><a href="{{ url_for('messages') }}">View my messages</a></p>
     <br>
     {% if orders %} My orders: {% endif %}
     {% for order in orders %}
-    <p>
-        <table>
-            <tr valign="top">
-                <td>{{ order.dish.dish_name }}</td>
-            </tr>
-            <tr valign="top">
-                <td><img src="{{ order.dish.photo }}" width="128" height="128"></td>
-            </tr>
-            <tr valign="top">
-                <td>quantity: {{ order.quantity }}</td>
-                <td>chef: {{ order.dish.seller.username }}</td>
-            </tr>
-            </tr>
-            <td><a href="{{ url_for('view_order', order_id=order.id) }}">View its details</a></td>
-            </tr>
-        </table>
-    </p>
+        {% include 'order_posts.html' %}
     {% endfor %}<br>
     {% if chef_dishes %} My orders: {% endif %}
     {% for dish in chef_dishes %}

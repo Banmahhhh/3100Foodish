@@ -8,12 +8,20 @@ from flask import request, url_for
 from werkzeug.urls import url_parse
 from app.forms import RegistrationForm, DishForm, OrderForm, SearchBox, EditProfileForm, CommentForm
 from datetime import datetime
+from app.forms import MessageForm
+from app.models import Message
 
 @app.route('/', methods=['GET', 'POST'])
 @app.route('/index', methods=['GET', 'POST'])
 @login_required
 def index():
-    dishes=Dish.query.all()
+    page = request.args.get('page', 1, type=int)
+    dishes=Dish.query.paginate(
+        page, app.config['POSTS_PER_PAGE'], False)
+    next_url = url_for('index', page=dishes.next_num) \
+        if dishes.has_next else None
+    prev_url = url_for('index', page=dishes.prev_num) \
+        if dishes.has_prev else None
     form=SearchBox()
     if form.validate_on_submit():
         results = Dish.query.filter(Dish.dish_name.like("%"+form.content.data+"%")).all()
@@ -21,7 +29,8 @@ def index():
             flash('No results match.')
         else:
             return render_template('search.html', title='Home', results=results)
-    return render_template('index.html', title='Home', dishes=dishes, form=form)
+    return render_template('index.html', title='Home', dishes=dishes.items, form=form, next_url=next_url,
+                           prev_url=prev_url)
 
 @app.route('/login', methods=['GET', 'POST'])
 def login():
@@ -88,7 +97,7 @@ def make_order(dishname):
     form = OrderForm()
     if form.validate_on_submit():
         order = Order(quantity=form.quantity.data,
-        status=1, dish=dish, buyer=current_user)
+        status="ongoing", dish=dish, buyer=current_user)
         dish.current_order_number+=1
         db.session.add(order)
         db.session.commit()
@@ -160,3 +169,52 @@ def cancel_by_customer(order_id):
             flash("You have deleted this order.")
         return redirect(url_for('user',username=current_user.username))
     return render_template('confirm_cancel.html')
+
+@app.route('/cancel_by_chef/<dish_id>', methods=['GET','POST'])
+@login_required
+def cancel_by_chef(dish_id):
+    dish = Dish.query.filter_by(id=int(dish_id)).first()
+    orders = Order.query.filter_by(dish=dish).all()
+    if request.method == 'POST':
+        if request.form['submit_button'] == 'Yes':
+            for order in orders:
+                notice="Dear user %s, your order for dish %s has been cancelled by the chef. Please contact the chef for further information." % (order.buyer.username, dish.dish_name)
+                msg=Message(author=None, recipient=order.buyer, body=notice)
+                db.session.add(msg)
+                db.session.delete(order)
+            db.session.delete(dish)
+            db.session.commit()
+            flash("You have deleted this dish.")
+        return redirect(url_for('user',username=current_user.username))
+    return render_template('confirm_cancel.html')
+
+@app.route('/send_message/<recipient>', methods=['GET', 'POST'])
+@login_required
+def send_message(recipient):
+    user = User.query.filter_by(username=recipient).first_or_404()
+    form = MessageForm()
+    if form.validate_on_submit():
+        msg = Message(author=current_user, recipient=user,
+                      body=form.message.data)
+        db.session.add(msg)
+        db.session.commit()
+        flash('Your message has been sent.')
+        return redirect(url_for('user', username=recipient))
+    return render_template('send_message.html', title='Send Message',
+                           form=form, recipient=recipient)
+
+@app.route('/messages')
+@login_required
+def messages():
+    current_user.last_message_read_time = datetime.utcnow()
+    db.session.commit()
+    page = request.args.get('page', 1, type=int)
+    messages = current_user.messages_received.order_by(
+        Message.timestamp.desc()).paginate(
+            page, app.config['POSTS_PER_PAGE'], False)
+    next_url = url_for('messages', page=messages.next_num) \
+        if messages.has_next else None
+    prev_url = url_for('messages', page=messages.prev_num) \
+        if messages.has_prev else None
+    return render_template('messages.html', messages=messages.items,
+                           next_url=next_url, prev_url=prev_url)
