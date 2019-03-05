@@ -10,6 +10,8 @@
 
 03/03/2019 Add make comments and cancel dish by customer functions -- yang zhi lin
 
+05/03/2019 Add send private messages and cancel dish by chef functions -- yang zhi lin
+
 ## How to run it:
 
 1. Clone this repo to your local machine
