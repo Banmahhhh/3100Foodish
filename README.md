@@ -12,6 +12,8 @@
 
 05/03/2019 Add send private messages and cancel dish by chef functions -- yang zhi lin
 
+07/03/2019 Add rating function and update system notifications -- yang zhi lin
+
 ## How to run it:
 
 1. Clone this repo to your local machine
@@ -21,7 +23,7 @@
 $export FLASK_APP=foodish.py
 $flask run
 ```
-4.open http://127.0.0.1:5000/
+4. open http://127.0.0.1:5000/
 
 
 
