@@ -9,7 +9,7 @@
     <p>delivery time: {{ dish.deliveryTime }}</p>
     <p>expected order number: {{ dish.expected_order_number }}</p>
     <p>current order number: {{ dish.current_order_number }}</p>
-    <p>rating: {{ dish.rating }}</p>
+    {% if dish.rating %}<p>rating: {{ dish.rating }}</p>{% endif %}
     <p>flavour: {{ dish.flavour }}</p>
     <p>potential taboo: {{ dish.potential_taboo }}</p>
     <p>description: {{ dish.description }}</p>

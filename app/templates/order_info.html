@@ -1,7 +1,7 @@
 {% extends "base.html" %}
 
 {% block content %}
-<h2>dish name: {{ order.dish.dish_name }}</h2>
+<h2><a href="{{ url_for('dish_info', dishname=order.dish.dish_name) }}">dish name: {{ order.dish.dish_name }}</a></h2>
 <img src="{{ order.dish.photo }}" width="300" height="300">
 <p> order time: {{ order.order_time }}</p>
 <p> order quantity: {{ order.quantity }}</p>
@@ -28,5 +28,11 @@
 <p><a href="{{ url_for('cancel_by_customer', order_id=order.id) }}">Cancel this order</a></p>
 {% else %}
 <p>You cannot cancel this order because the cancel period has passed.</p>
+{% endif %}
+{% if order.order_rating is none %}
+    Rate this order:
+    {% include 'rating_button.html' %}
+{% else %}
+<p> your rating for this order: {{ order.order_rating }}</p>
 {% endif %}
 {% endblock %}

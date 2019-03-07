@@ -4,6 +4,7 @@
     <h1>User: {{ user.username }}</h1>
     {% if user.head_portrait %}<img src="{{ user.head_portrait }}" width="300" height="300">{% endif %}
     {% if user.self_introduction %}<p>Self introduction:{{ user.self_introduction }}</p>{% endif %}<br>
+    {% if user.rating %}<p>This chef's rating:{{ user.rating }}</p>{% endif %}<br>
     {% if user != current_user %}
     <p>
         <a href="{{ url_for('send_message',recipient=user.username) }}">Send private message</a>

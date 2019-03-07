@@ -1,0 +1,10 @@
+<form action="{{ url_for('rating', order_id=order.id) }}" method="post">
+    <select name="rating_button">
+        <option value="1">1</option>
+        <option value="2">2</option>
+        <option value="3">3</option>
+        <option value="4">4</option>
+        <option value="5">5</option>
+    </select>
+    <input type="submit" name="submit" value="submit">
+</form>

@@ -9,7 +9,8 @@ from werkzeug.urls import url_parse
 from app.forms import RegistrationForm, DishForm, OrderForm, SearchBox, EditProfileForm, CommentForm
 from datetime import datetime
 from app.forms import MessageForm
-from app.models import Message
+from app.models import Message, Notification
+from flask import jsonify
 
 @app.route('/', methods=['GET', 'POST'])
 @app.route('/index', methods=['GET', 'POST'])
@@ -76,7 +77,7 @@ def post_dish():
         dish = Dish(dish_name=form.dishName.data, price=form.dishPrice.data,
         photo=form.dishPhoto.data, deliveryTime=form.dishDeliveryTime.data,
         expected_order_number=form.dishExpectedOrderNumber.data, current_order_number=0,
-        rating=0, flavour=form.dishFlavour.data, 
+        flavour=form.dishFlavour.data, 
         potential_taboo=form.dishTaboo.data, description=form.dishDescription.data,
         pick_up_location=form.dishPickUpLocation.data, seller=current_user)
         db.session.add(dish)
@@ -100,8 +101,13 @@ def make_order(dishname):
         status="ongoing", dish=dish, buyer=current_user)
         dish.current_order_number+=1
         db.session.add(order)
+        notice="Dear chef %s, you have a new order made by user %s for your dish %s." % (dish.seller.username, current_user.username, dish.dish_name)
+        msg=Message(author=None, recipient=dish.seller, body=notice)
+        db.session.add(msg)
+        dish.seller.add_notification('unread_message_count', dish.seller.new_messages())
         db.session.commit()
         flash('Your order is successful!')
+
         return redirect(url_for('index'))
     return render_template('order.html', dish=dish, form=form)
 
@@ -181,7 +187,8 @@ def cancel_by_chef(dish_id):
                 notice="Dear user %s, your order for dish %s has been cancelled by the chef. Please contact the chef for further information." % (order.buyer.username, dish.dish_name)
                 msg=Message(author=None, recipient=order.buyer, body=notice)
                 db.session.add(msg)
-                db.session.delete(order)
+                order.buyer.add_notification('unread_message_count', order.buyer.new_messages())
+                db.session.delete(order)   
             db.session.delete(dish)
             db.session.commit()
             flash("You have deleted this dish.")
@@ -197,6 +204,7 @@ def send_message(recipient):
         msg = Message(author=current_user, recipient=user,
                       body=form.message.data)
         db.session.add(msg)
+        user.add_notification('unread_message_count', user.new_messages())
         db.session.commit()
         flash('Your message has been sent.')
         return redirect(url_for('user', username=recipient))
@@ -207,6 +215,7 @@ def send_message(recipient):
 @login_required
 def messages():
     current_user.last_message_read_time = datetime.utcnow()
+    current_user.add_notification('unread_message_count', 0)
     db.session.commit()
     page = request.args.get('page', 1, type=int)
     messages = current_user.messages_received.order_by(
@@ -218,3 +227,46 @@ def messages():
         if messages.has_prev else None
     return render_template('messages.html', messages=messages.items,
                            next_url=next_url, prev_url=prev_url)
+
+@app.route('/notifications')
+@login_required
+def notifications():
+    since = request.args.get('since', 0.0, type=float)
+    notifications = current_user.notifications.filter(
+        Notification.timestamp > since).order_by(Notification.timestamp.asc())
+    return jsonify([{
+        'name': n.name,
+        'data': n.get_data(),
+        'timestamp': n.timestamp
+    } for n in notifications])
+
+@app.route('/rating/<order_id>', methods=['POST'])
+@login_required
+def rating(order_id):
+    order=Order.query.filter_by(id=order_id).first()
+    order.order_rating=int(request.form['rating_button'])
+    db.session.commit()
+    orders=Order.query.filter_by(dish=order.dish).all()
+    ratings=0
+    cnt=0
+    for o in orders:
+        if o.order_rating is not None:
+            ratings+=o.order_rating
+            cnt+=1
+    if cnt!=0:
+        order.dish.rating=ratings/cnt
+    db.session.commit()
+
+    chef=order.dish.seller
+    dishes=Dish.query.filter_by(seller=chef).all()
+    ratings=0
+    cnt=0
+    for d in dishes:
+        if d.rating is not None:
+            ratings+=d.rating
+            cnt+=1
+    if cnt!=0:
+        chef.rating=ratings/cnt
+    db.session.commit()
+    return redirect(url_for('view_order',order_id=order_id))
+     
