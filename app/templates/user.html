@@ -8,9 +8,9 @@
     {% if user != current_user %}
     <p>
         <a href="{{ url_for('send_message',recipient=user.username) }}">Send private message</a>
+        <a href="{{ url_for('chef_dishes', username=user.username) }}">View chef's dishes</a>
     </p>
-    {% endif %}
-    {% if user == current_user %}
+    {% else %}
     <a href="{{ url_for('chef_dishes', username=user.username) }}">View my orders as a chef</a>
     <br>
     <a href="{{ url_for('customer_orders', username=user.username) }}">View my orders as a customer</a>
@@ -23,9 +23,11 @@
     {% for order in orders %}
         {% include 'order_posts.html' %}
     {% endfor %}<br>
-    {% if chef_dishes %} My orders: {% endif %}
+    {% endif %}
+
+    {% if chef_dishes %} Dishes: {% endif %}
     {% for dish in chef_dishes %}
         {% include 'dish_posts.html' %}
     {% endfor %}<br>
-    {% endif %}
+    
 {% endblock %}
