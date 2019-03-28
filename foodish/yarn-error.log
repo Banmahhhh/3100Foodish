@@ -1,0 +1,63 @@
+Arguments: 
+  E:\Node\node.exe C:\Users\Administrator\AppData\Roaming\npm\node_modules\yarn\bin\yarn.js
+
+PATH: 
+  C:\Program Files (x86)\Common Files\Oracle\Java\javapath;C:\Windows\system32;C:\Windows;C:\Windows\System32\Wbem;C:\Windows\System32\WindowsPowerShell\v1.0\;E:\Git\Git\cmd;E:\Git\Git\mingw64\bin;E:\Git\Git\usr\bin;D:\SVN\bin;E:\vscode\Microsoft VS Code\bin;E:\Node\;D:\mysql\bin;D:\python\Scripts\;D:\python\;E:\vscode\Microsoft VS Code\bin;E:\redis64-2.8.9;E:\MongoDB\bin;C:\Users\Administrator\AppData\Roaming\npm;E:\httpd-2.4.16-win64-VC14\Apache24\bin;D:\jdk\bin;D:\jdk\jre\bin;D:\android_sdk\tools;D:\android_sdk\platform-tools
+
+Yarn version: 
+  1.9.2
+
+Node version: 
+  8.11.3
+
+Platform: 
+  win32 x64
+
+Trace: 
+  Error: connect ETIMEDOUT 114.55.80.225:443
+      at Object._errnoException (util.js:992:11)
+      at _exceptionWithHostPort (util.js:1014:20)
+      at TCPConnectWrap.afterConnect [as oncomplete] (net.js:1186:14)
+
+npm manifest: 
+  {
+    "name": "",
+    "version": "0.1.0",
+    "private": true,
+    "scripts": {
+      "dev": "vue-cli-service serve",
+      "serve": "vue-cli-service serve",
+      "build": "vue-cli-service build",
+      "lint": "vue-cli-service lint",
+      "test:unit": "vue-cli-service test:unit"
+    },
+    "dependencies": {
+      "axios": "^0.18.0",
+      "iview": "^3.2.2",
+      "vue": "^2.5.21",
+      "vue-router": "^3.0.1",
+      "vuex": "^3.0.1"
+    },
+    "devDependencies": {
+      "@vue/cli-plugin-babel": "^3.0.1",
+      "@vue/cli-plugin-eslint": "^3.0.1",
+      "@vue/cli-plugin-unit-jest": "^3.0.1",
+      "@vue/cli-service": "^3.0.1",
+      "@vue/eslint-config-prettier": "^4.0.1",
+      "@vue/test-utils": "^1.0.0-beta.20",
+      "babel-core": "7.0.0-bridge.0",
+      "babel-eslint": "^10.0.1",
+      "babel-jest": "^23.6.0",
+      "eslint": "^5.8.0",
+      "eslint-plugin-vue": "^5.0.0",
+      "less": "^3.0.4",
+      "less-loader": "^4.1.0",
+      "vue-template-compiler": "^2.5.21"
+    }
+  }
+
+yarn manifest: 
+  No manifest
+
+Lockfile: 
+  No lockfile

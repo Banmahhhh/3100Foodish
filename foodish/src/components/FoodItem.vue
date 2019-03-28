@@ -3,7 +3,7 @@
     <div class="foo-item-image">
       <img :src="item.image_url" alt="" @click="$router.push({name:'Info',query:{id:item.id}})">
       <p @click="toInfo(item)" class="food-col-p-center"> <img :src="item.image_url" />{{item.nickname||''}}</p>
-      <Progress :percent="item.book_now/item.max_book" status="active">
+      <Progress :percent="(item.book_now/item.max_book)*100" status="active">
         {{item.book_now}}/{{item.max_book}}
       </Progress>
     </div>

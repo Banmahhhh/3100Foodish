@@ -61,7 +61,7 @@
         </div>
       </div>
       <div v-if="active === 1" class="person-main-right" style="padding-top:0">
-        <div class="not-data" v-if="bookList.length === 0">
+        <div class="not-data" v-if="bookList2.length === 0">
           <img src="../../resource/745077899322453353.jpg" />
           <p>It is empty. Add something to it now!</p>
         </div>
@@ -69,10 +69,11 @@
           @evaluate="onEvaluate"
           commit
           :align="`${index % 2 !== 0 ? 'right' : 'left'}`"
-          v-for="(item, index) in bookList"
+          v-for="(item, index) in bookList2"
           :key="item.id"
           :item="item.food_detail"
           :isCommit="item.is_comment"
+          
         />
       </div>
       <div v-if="active === 2" class="person-main-right" style="padding-top:0">
@@ -171,9 +172,13 @@ export default {
     username() {
       return this.$store.state.users.username;
     },
+    bookList2(){
+      return this.bookList.filter(item=>item.date<+new Date())
+    },
     commingList() {
       const d = +new Date();
       const dayTime = 24 * 60 * 60 * 1000;
+      const list = [...this.foodList,...this.bookList]
       return this.bookList
         .map(item => {
           const food_detail = item.food_detail;
@@ -199,8 +204,32 @@ export default {
             //
           }
         })
+        .concat(this.foodList)
+        .map((item)=>{
+          const text="you need to cook it"
+          if (!item.is_cancel) {
+              return {
+                ...item,
+                
+                orderStatus: 0,
+                orderText:this.$store.state.users.id==item.author?text: "You need to take it"
+              };
+            }
+
+            if (item.is_cancel) {
+              return {
+                ...item,
+                
+                orderStatus: 1,
+                orderText: "It has been canceled"
+              };
+            }
+        })
         .filter(item => {
-          return +new Date() >= item.date && item.is_cancel;
+          if(+new Date()<=item.date) {
+            return true
+          }
+          return false;
         });
     }
   },
@@ -280,9 +309,7 @@ export default {
           return 1;
         }
       });
-      this.foodList = this.foodList.filter(item => {
-        return +new Date() >= item.date;
-      });
+      
     },
     async getBookInfo() {
       const { data } = await this.$http({

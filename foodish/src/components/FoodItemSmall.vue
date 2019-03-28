@@ -7,7 +7,7 @@
     </div>
     <div class="foo-item-main" :class="align==='right'?'food-item-main-right':''">
       <h3>{{item.name}}</h3>
-      <Progress :percent="item.book_now/item.max_book" status="active">
+      <Progress :percent="(item.book_now/item.max_book)*100" status="active">
         {{item.book_now}}/{{item.max_book}}
       </Progress>
       <div class="item-main-row">
