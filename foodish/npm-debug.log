@@ -10,8 +10,8 @@
 6 silly lifecycle @0.1.0~preserve: no script for preserve, continuing
 7 info lifecycle @0.1.0~serve: @0.1.0
 8 verbose lifecycle @0.1.0~serve: unsafe-perm in lifecycle true
-9 verbose lifecycle @0.1.0~serve: PATH: F:\Users\jjj\AppData\Roaming\npm\node_modules\npm\bin\node-gyp-bin;d:\foodish\foodish\node_modules\.bin;I:\Node;F:\Program Files (x86)\Common Files\NetSarang;F:\ProgramData\Oracle\Java\javapath;F:\Program Files (x86)\Java\jdk\jre\bin;F:\Program Files (x86)\Java\jdk\bin;F:\Windows\system32;F:\Program Files (x86)\Java\jdk\jre\bin;I:\SVN\bin;C:\mysql\bin;I:\Python27;I:\Go\bin;I:\Microsoft VS Code\bin;I:\Node\;I:\NDK\android-ndk-r10e;I:\Git\Git\bin;I:\MongoDB\bin;I:\Microsoft VS Code\bin;I:\SVN\bin;I:\SVN\bin;D:\apache\Apache24\bin;C:\redis;C:\MySQL\bin;I:\Python27\Lib;I:\Python27\DLLs;I:\Python27\Lib\lib-tk;;C:\appWork\self-wrok\go_work;I:\Go;C:\apache-tomcat-8.0.51\lib\servlet-api.jar;C:\apache-tomcat-8.0.51\bin;C:\apache-tomcat-8.0.51\lib;D:\android_sdk\tools;D:\android_sdk\platform-tools;F:\Users\jjj\AppData\Roaming\npm
-10 verbose lifecycle @0.1.0~serve: CWD: d:\foodish\foodish
+9 verbose lifecycle @0.1.0~serve: PATH: F:\Users\jjj\AppData\Roaming\npm\node_modules\npm\bin\node-gyp-bin;D:\foodish\node_modules\.bin;I:\Node;F:\Program Files (x86)\Common Files\NetSarang;F:\ProgramData\Oracle\Java\javapath;F:\Program Files (x86)\Java\jdk\jre\bin;F:\Program Files (x86)\Java\jdk\bin;F:\Windows\system32;F:\Program Files (x86)\Java\jdk\jre\bin;I:\SVN\bin;C:\mysql\bin;I:\Python27;I:\Go\bin;I:\Microsoft VS Code\bin;I:\Node\;I:\NDK\android-ndk-r10e;I:\Git\Git\bin;I:\MongoDB\bin;I:\Microsoft VS Code\bin;I:\SVN\bin;I:\SVN\bin;D:\apache\Apache24\bin;C:\redis;C:\MySQL\bin;I:\Python27\Lib;I:\Python27\DLLs;I:\Python27\Lib\lib-tk;;C:\appWork\self-wrok\go_work;I:\Go;C:\apache-tomcat-8.0.51\lib\servlet-api.jar;C:\apache-tomcat-8.0.51\bin;C:\apache-tomcat-8.0.51\lib;D:\android_sdk\tools;D:\android_sdk\platform-tools;F:\Users\jjj\AppData\Roaming\npm
+10 verbose lifecycle @0.1.0~serve: CWD: D:\foodish
 11 silly lifecycle @0.1.0~serve: Args: [ '/d /s /c', 'vue-cli-service serve' ]
 12 silly lifecycle @0.1.0~serve: Returned: code: 1  signal: null
 13 info lifecycle @0.1.0~serve: Failed to exec serve script
@@ -24,7 +24,7 @@
 14 verbose stack     at maybeClose (internal/child_process.js:962:16)
 14 verbose stack     at Process.ChildProcess._handle.onexit (internal/child_process.js:251:5)
 15 verbose pkgid @0.1.0
-16 verbose cwd d:\foodish\foodish
+16 verbose cwd D:\foodish
 17 error Windows_NT 6.1.7601
 18 error argv "I:\\Node\\node.exe" "F:\\Users\\jjj\\AppData\\Roaming\\npm\\node_modules\\npm\\bin\\npm-cli.js" "run" "serve"
 19 error node v10.15.0

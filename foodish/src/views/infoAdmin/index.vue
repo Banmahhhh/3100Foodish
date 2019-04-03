@@ -2,28 +2,35 @@
   <div class="info">
     <div class="info-header">
       <div class="info-left" @click="$router.back()">
-        <img src="@/resource/fanhui.svg" alt="">
+        <img src="@/resource/fanhui.svg" alt="" />
       </div>
       <span>Foodish</span>
     </div>
     <div class="info-main">
       <FoodItem :item="item" :infoBtn="false" />
       <div class="item-main-row">
-        <label>Flavor
-          <i></i>
-        </label>
-        <span class="text-ellipsis">：{{item.flavor}}</span>
+        <label>Flavor <i></i> </label>
+        <span class="text-ellipsis">：{{ item.flavor }}</span>
       </div>
       <div class="item-main-row">
-        <label>Dislike
-          <i></i>
-        </label>
-        <span class="text-ellipsis">：{{item.dislike}}</span>
+        <label>Dislike <i></i> </label>
+        <span class="text-ellipsis">：{{ item.dislike }}</span>
       </div>
-      <div class="item-footer" v-if="item.date>+new Date()">
-        <Button @click="onDelete(item)" v-if="isPerson " size="large" type="warning">cancel it</Button>
-        <Button @click="onReserve(item.id)" v-else-if="!isPerson && !isBooked" size="large" type="warning">reserve it</Button>
-        <Button @click="onDeleteReserve(item.id)" v-else-if="!isPerson&&isBooked" size="large" type="warning">cancel it</Button>
+      <div class="item-main-row">
+        <Button
+          style="margin:0 auto"
+          v-if="!user.isStop"
+          type="warning"
+          @click="onStop(true)"
+          >prohibit translation</Button
+        >
+        <Button
+          style="margin:0 auto"
+          v-else
+          type="warning"
+          @click="onStop(false)"
+          >permitted transaction</Button
+        >
       </div>
       <!-- 评论 -->
       <div class="commit">
@@ -35,7 +42,7 @@
 
 <script>
 import FoodItem from "@/components/FoodItem";
-import CommitItem from "@/components/CommitItem";
+import CommitItem from "@/components/CommitAdmin";
 export default {
   components: { FoodItem, CommitItem },
   data() {
@@ -48,7 +55,8 @@ export default {
       dislikeList: [],
       bookList: [],
       commitList: [],
-      userName: ""
+      userName: "",
+      user: {}
     };
   },
   computed: {
@@ -68,12 +76,13 @@ export default {
     await this.getInfo();
     this.getBookInfo();
     this.getCommitList();
+    this.info();
   },
   methods: {
     async getCommitList() {
       const { id } = this.$route.query;
       const { data } = await this.$http({
-        url: this.API.COMMIT_ADD,
+        url: this.API.COMPLAIN,
         params: {
           food: id
         }
@@ -154,6 +163,56 @@ export default {
       this.$Modal.success({
         title: "Tips",
         content: "You have reserved it successfull!"
+      });
+    },
+    async onStop(isStop) {
+      await this.$http({
+        url: this.API.UPDATE_USER(this.item.author),
+        method: "PATCH",
+        data: {
+          isStop: isStop
+        }
+      });
+      this.info();
+      if (isStop === true) {
+        this.$Modal.info({
+          title: "Tips",
+          content: "You have prohibited the chef from cooking in successfully."
+        });
+        this.createNotify({
+          text:
+            "Because some people have reported you, No cooking",
+          creater: this.$store.state.users.id,
+          listener: this.user.id
+        });
+      } else {
+        this.$Modal.info({
+          title: "Tips",
+          content: "You have permitted the chef from cooking in successfully."
+        });
+        this.createNotify({
+          text: "Continued cooking has been allowed",
+          creater: this.$store.state.users.id,
+          listener: this.user.id
+        });
+      }
+    },
+    async info() {
+      const { data } = await this.$http({
+        url: this.API.UPDATE_USER(this.item.author),
+        method: "get"
+      });
+      this.user = data;
+    },
+    async createNotify({ text, creater, listener }) {
+      await this.$http({
+        url: this.API.NOTIFY,
+        method: "post",
+        data: {
+          text,
+          creater,
+          listener
+        }
       });
     },
     async getInfo() {

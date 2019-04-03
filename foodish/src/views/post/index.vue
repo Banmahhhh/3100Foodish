@@ -106,7 +106,7 @@ export default {
             date && date.valueOf() <= new Date().valueOf() + 24 * 60 * 60 * 1000
           );
         }
-      }
+      },
     };
   },
   created() {
@@ -160,6 +160,7 @@ export default {
       } catch (error) {}
       return {
         ...this.forms,
+        food_image_url:this.forms.image_url,
         book_now: 0,
         date: +new Date(this.forms.date),
         price: this.forms.price * 100,

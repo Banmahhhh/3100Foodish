@@ -21,6 +21,9 @@
           <li :class="{ active: active === 3 }" @click="onClickMenu(3)">
             Comming order
           </li>
+          <li :class="{ active: active === 4 }" @click="onClickMenu(4)">
+            Private message
+          </li>
         </ul>
       </div>
       <div v-if="active === 0" class="person-main-right">
@@ -28,21 +31,14 @@
         <div class="person-main-row">
           <div class="person-logo">
             <div :style="getCurrStyle()" class="person-image"></div>
-            <Upload
-              :on-success="onFileSuccess"
-              name="img"
-              :show-upload-list="false"
-              multiple
-              type="drag"
-              :action="API.IMAGE_UPLOAD"
-            >
+            <Upload :on-success="onFileSuccess" name="img" :show-upload-list="false" multiple type="drag" :action="API.IMAGE_UPLOAD">
               <Button size="small">change</Button>
             </Upload>
-            
+
           </div>
           <div class="person-info">
             <Rate :value="score" disabled />
-            <p style="font-size:20px" >{{uname}}</p>
+            <p style="font-size:20px">{{uname}}</p>
             <p style="font-size:20px">{{username}}</p>
             <p style="font-size:20px">fans:{{fans_num}}</p>
             <br><br>
@@ -55,9 +51,7 @@
         </div>
         <!-- loginout -->
         <div class="person-main-row-btn">
-          <Button @click="logout" type="warning" class="logout" size="large"
-            >logout</Button
-          >
+          <Button @click="logout" type="warning" class="logout" size="large">logout</Button>
         </div>
       </div>
       <div v-if="active === 1" class="person-main-right" style="padding-top:0">
@@ -65,50 +59,28 @@
           <img src="../../resource/745077899322453353.jpg" />
           <p>It is empty. Add something to it now!</p>
         </div>
-        <FoodItemSmall
-          @evaluate="onEvaluate"
-          commit
-          :align="`${index % 2 !== 0 ? 'right' : 'left'}`"
-          v-for="(item, index) in bookList2"
-          :key="item.id"
-          :item="item.food_detail"
-          :isCommit="item.is_comment"
-          
-        />
+        <FoodItemSmall @evaluate="onEvaluate" commit :align="`${index % 2 !== 0 ? 'right' : 'left'}`" v-for="(item, index) in bookList2" :key="item.id" :item="item.food_detail" :isCommit="item.is_comment" />
       </div>
       <div v-if="active === 2" class="person-main-right" style="padding-top:0">
-        <div class="not-data" v-if="foodList.length === 0">
+        <div class="not-data" v-if="foodListSoon.length === 0">
           <img src="../../resource/745077899322453353.jpg" />
           <p>It is empty. Add something to it now!</p>
         </div>
-        <FoodItemSmall
-          :align="`${index % 2 !== 0 ? 'right' : 'left'}`"
-          v-for="(item, index) in foodList"
-          :key="item.id"
-          :item="item"
-        />
+        <FoodItemSmall :align="`${index % 2 !== 0 ? 'right' : 'left'}`" v-for="(item, index) in foodListSoon" :key="item.id" :item="item" />
       </div>
       <div v-if="active === 3" class="person-main-right" style="padding-top:0">
         <div class="not-data" v-if="commingList.length === 0">
           <img src="../../resource/745077899322453353.jpg" />
           <p>It is empty. Add something to it now!</p>
         </div>
-        <FoodItemSmall
-          comming
-          :align="`${index % 2 !== 0 ? 'right' : 'left'}`"
-          v-for="(item, index) in commingList"
-          :key="item.id"
-          :item="item"
-        />
+        <FoodItemSmall comming :align="`${index % 2 !== 0 ? 'right' : 'left'}`" v-for="(item, index) in commingList" :key="item.id" :item="item" />
+      </div>
+      <div v-if="active === 4" class="person-main-right" style="padding-top:0">
+        <Notify v-for="(item, index) in messageList" :key="item.id" :item="item" />
       </div>
     </div>
     <!-- 评论 -->
-    <Modal
-      :value="isCommit"
-      @on-cancel="isCommit = false"
-      title="evaluate"
-      :styles="{ width: '500px' }"
-    >
+    <Modal :value="isCommit" @on-cancel="isCommit = false" title="evaluate" :styles="{ width: '500px' }">
       <div class="modal-wrap">
         <div class="modal-inner">
           <div class="image" :style="currStyle(modal.image_url)"></div>
@@ -118,16 +90,37 @@
           </div>
         </div>
         <Rate v-model="modal.score" />
-        <Input
-          type="textarea"
-          v-model="modal.content"
-          :rows="4"
-          placeholder="commit"
-        ></Input>
+        <Input type="textarea" v-model="modal.content" :rows="4" placeholder="commit"></Input>
       </div>
       <div slot="footer" class="modal-footer">
         <Button @click="isCommit = false">cancel</Button>
+        <Button @click="isReport=true,isCommit=false" style="color:red">report</Button>
         <Button @click="onCommitAdd" type="warning">ok</Button>
+      </div>
+    </Modal>
+    <!-- 举报 -->
+    <Modal :value="isReport" @on-cancel="isReport = false" title="evaluate" :styles="{ width: '500px' }">
+      <div class="modal-wrap">
+        <p>report reason</p>
+        <Row :gutter="16">
+          <Col :span="14">
+          <Input type="textarea" v-model="reportForm.text" :rows="14" placeholder="commit"></Input>
+          </Col>
+          <Col :span="10">
+          <Upload :on-success="onFileSuccess2" name="img" :show-upload-list="false" multiple type="drag" :action="API.IMAGE_UPLOAD">
+            <div v-if="!reportForm.image_url" style="padding: 120px 0">
+              <Icon type="ios-cloud-upload" size="52" style="color: #3399ff"></Icon>
+            </div>
+            <div v-else :style="`background:url(${reportForm.image_url}) no-repeat top center;
+                background-size: cover;width:100%;height:300px`">
+            </div>
+          </Upload>
+          </Col>
+        </Row>
+      </div>
+      <div slot="footer" class="modal-footer">
+        <Button @click="isReport = false">cancel</Button>
+        <Button @click="onReport" type="warning">commit</Button>
       </div>
     </Modal>
   </div>
@@ -135,10 +128,17 @@
 
 <script>
 import FoodItemSmall from "@/components/FoodItemSmall";
+import Notify from '@/components/Notify'
 export default {
-  components: { FoodItemSmall },
+  components: { FoodItemSmall ,Notify},
   data() {
     return {
+      reportForm:{
+          image_url:"",
+          text:"",
+          food:""
+      },  
+      isReport:false,
       last_name:"",
       active: 0,
       commitId: "",
@@ -159,6 +159,7 @@ export default {
       dislikeList: [],
       bookList: [],
       commitList: [],
+      messageList:[],
       foodList: [] //我做的菜列表
     };
   },
@@ -174,6 +175,9 @@ export default {
     },
     bookList2(){
       return this.bookList.filter(item=>item.date<+new Date())
+    },
+    foodListSoon(){
+        return this.foodList.filter(item=>item.date<+new Date()).filter(item=>!item.is_cancel)
     },
     commingList() {
       const d = +new Date();
@@ -239,7 +243,7 @@ export default {
     this.getBookInfo();
     this.getFoodList();
     this.getUserInfo();
-    this.getCommitList();
+    this.getUserNotify()
   },
   methods: {
     async onDescChange(){
@@ -253,6 +257,15 @@ export default {
       })
       this.$Message.success("edit successfully");
       this.getUserInfo()
+    },
+    async getUserNotify(){
+        const {data}= await this.$http({
+            url:this.API.NOTIFY,
+            params:{
+                listener:this.$store.state.users.id,
+            }
+        })
+        this.messageList = data
     },
     currStyle(img) {
       return `background-image:url(${img});width:150px;height:100px;`;
@@ -270,7 +283,7 @@ export default {
         }
       });
       let score = 0;
-      data.map(item => {
+      this.foodListSoon.map(item => {
         score += item.score;
       });
       this.score = score / data.length;
@@ -295,6 +308,9 @@ export default {
       });
       this.getUserInfo();
     },
+    async onFileSuccess2(res){
+        this.reportForm.image_url = res.url
+    },
     async getFoodList() {
       const { data } = await this.$http({
         url: this.API.FOOD_LIST,
@@ -309,7 +325,7 @@ export default {
           return 1;
         }
       });
-      
+      this.getCommitList();
     },
     async getBookInfo() {
       const { data } = await this.$http({
@@ -318,6 +334,7 @@ export default {
       this.bookList = data.map(item => {
         if (item.food_detail) {
           item.food_detail = JSON.parse(item.food_detail);
+          item.date = item.food_detail.date
         }
         return item;
       });
@@ -339,6 +356,11 @@ export default {
         content: "",
         id: item.id
       });
+      this.reportForm.food = item.id
+      this.reportItem = item
+      this.reportForm.text = ""
+      this.reportForm.image_url = ""
+      console.log(this.reportItem)
     },
     async onCommitAdd() {
       await this.$http({
@@ -355,6 +377,33 @@ export default {
       //刷新列表
       this.getBookInfo();
       this.$Message.success("Evaluation success!");
+    },
+    async onReport(){
+        if(!this.reportForm.text){
+            return this.$Message.info("Please enter complaints")
+        }
+        const foodInfo = {}
+        Object.keys(this.reportItem).map(key=>{
+            foodInfo['_'+key] = this.reportItem[key]
+        })
+        await this.$http({
+        url: this.API.COMPLAIN,
+        method: "post",
+        data: {
+          text: this.reportForm.text,
+          user_detail: JSON.stringify({
+              ...this.$store.state.users,
+              ts_image_url:this.reportForm.image_url,
+              ...foodInfo
+          }),
+          creater: this.$store.state.users.id,
+          food: this.reportForm.food,
+        }
+      });
+      this.isReport = false;
+      //刷新列表
+      this.getBookInfo();
+      this.$Message.success("Report success!");
     }
   }
 };
@@ -363,3 +412,6 @@ export default {
 <style lang="less">
 @import "./style.less";
 </style>
+<style lang="less" >
+</style>
+

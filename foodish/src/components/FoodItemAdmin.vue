@@ -1,31 +1,29 @@
 <template>
   <div
-    :style="`${commit ? 'height:230px' : ''}`"
     class="food-item"
     :class="align === 'right' ? 'food-item-align-right' : ''"
   >
     <div class="foo-item-image">
-      <div
-        :style="currStyle(item.food_image_url)"
-        @click="
-          $router.push({
-            name: 'Info',
-            query: { id: item.id, userName: item.auther_name }
-          })
-        "
-      ></div>
-    </div>
-    <div
-      class="foo-item-main"
-      :class="align === 'right' ? 'food-item-main-right' : ''"
-    >
-      <h3>{{ item.name }}</h3>
+      <img
+        :src="item.food_image_url"
+        alt=""
+        @click="$router.push({ name: 'InfoAdmin', query: { id: item.id } })"
+      />
+      <p @click="toInfo(item)" class="food-col-p-center">
+        {{ item.nickname || "" }}
+      </p>
       <Progress
         :percent="(item.book_now / item.max_book) * 100"
         status="active"
       >
         {{ item.book_now }}/{{ item.max_book }}
       </Progress>
+    </div>
+    <div
+      class="foo-item-main"
+      :class="align === 'right' ? 'food-item-main-right' : ''"
+    >
+      <h3>{{ item.name }}</h3>
       <div class="item-main-row">
         <label>Price <i></i> </label>
         <span class="text-ellipsis"
@@ -50,23 +48,9 @@
         <label>Picking place <i></i> </label>
         <span class="text-ellipsis">：{{ item.place }}</span>
       </div>
-      <div
-        v-if="commit && !isCommit"
-        class="item-main-row"
-        style="padding-top:8px"
-      >
-        <Button type="warning" @click="$emit('evaluate', item)"
-          >To evaluate</Button
-        >
-      </div>
-      <div v-if="comming" class="item-main-row" style="padding-top:0">
-        <p
-          :style="
-            item.orderStatus === 0 ? 'color:#f95' : 'color:rgb(51, 153, 255)'
-          "
-        >
-          {{ item.orderText }}
-        </p>
+      <div class="item-main-row">
+        <label>Introduction <i></i> </label>
+        <span class="text-ellipsis">：{{ item.content }}</span>
       </div>
     </div>
   </div>
@@ -88,36 +72,34 @@ export default {
       default() {
         return {};
       }
-    },
-    comming: {
-      type: Boolean,
-      default: false
-    },
-    commit: {
-      type: Boolean,
-      default: false
-    },
-    isCommit: {
-      type: Boolean,
-      default: false
     }
   },
+  data() {
+    return {
+      user: {}
+    };
+  },
+  created() {},
   methods: {
-    currStyle(img) {
-      return `background:url(${img}) no-repeat center center;background-size: cover;width:150px;height:150px`;
+    toInfo(item) {
+      if (item.author != this.$store.state.users.id) {
+        this.$router.push({
+          name: "PersonHome",
+          query: { userId: item.author }
+        });
+      }
     }
   }
 };
 </script>
 
-<style lang="less" scoped>
+<style lang="less">
 .food-item {
   display: flex;
   align-items: center;
-  min-height: 200px;
-  height: auto;
+  padding: 30px 50px;
+  height: 320px;
   border-bottom: 1px solid #e0e0e0;
-  padding: 0;
   .ivu-btn-warning,
   .ivu-progress-bg {
     background-color: #f95;
@@ -135,16 +117,15 @@ export default {
   flex: 1;
   overflow: hidden;
   height: 100%;
-  padding: 10px 0;
-  padding-left: 30px;
+  padding-left: 50px;
   h3 {
-    font-size: 14px;
-    padding-bottom: 10px;
+    font-size: 16px;
+    padding-bottom: 30px;
   }
   .item-main-row {
     color: #323232;
-    font-size: 12px;
-    line-height: 25px;
+    font-size: 14px;
+    line-height: 30px;
     display: flex;
     align-items: flex-start;
     justify-content: space-between;
@@ -164,25 +145,39 @@ export default {
   }
 }
 .food-item-main-right {
-  padding-right: 30px;
+  padding-right: 50px;
   padding-left: 0;
 }
 .foo-item-image {
-  width: 150px;
+  width: 300px;
   overflow: hidden;
-  height: 100%;
-  display: flex;
-  align-items: center;
 }
 .foo-item-image img {
   width: 100%;
   background-color: #f0f0f0;
-  height: 100px;
+  height: 200px;
   display: block;
 }
 .foo-item-image p {
   font-size: 14px;
   color: #323232;
+
   line-height: 40px;
+}
+.food-item {
+  .food-col-p-center {
+    display: flex;
+    align-items: center;
+    padding: 5px 0;
+    img {
+      width: 40px;
+      height: 40px;
+      border-radius: 50px;
+      background-color: #f5f5f5;
+      border: 1px solid #f5f5f5;
+      margin-right: 5px;
+      overflow: hidden;
+    }
+  }
 }
 </style>

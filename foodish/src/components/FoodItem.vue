@@ -1,50 +1,63 @@
 <template>
-  <div class="food-item" :class="align==='right'?'food-item-align-right':''">
+  <div
+    class="food-item"
+    :class="align === 'right' ? 'food-item-align-right' : ''"
+  >
     <div class="foo-item-image">
-      <img :src="item.image_url" alt="" @click="$router.push({name:'Info',query:{id:item.id}})">
-      <p @click="toInfo(item)" class="food-col-p-center"> <img :src="item.image_url" />{{item.nickname||''}}</p>
-      <Progress :percent="(item.book_now/item.max_book)*100" status="active">
-        {{item.book_now}}/{{item.max_book}}
+      <img
+        :src="item.food_image_url"
+        alt=""
+        @click="$router.push({ name: 'Info', query: { id: item.id } })"
+      />
+      <p @click="toInfo(item)" class="food-col-p-center">
+        {{ item.nickname || "" }}
+      </p>
+      <Progress
+        :percent="(item.book_now / item.max_book) * 100"
+        status="active"
+      >
+        {{ item.book_now }}/{{ item.max_book }}
       </Progress>
     </div>
-    <div class="foo-item-main" :class="align==='right'?'food-item-main-right':''">
-      <h3>{{item.name}}</h3>
+    <div
+      class="foo-item-main"
+      :class="align === 'right' ? 'food-item-main-right' : ''"
+    >
+      <h3>{{ item.name }}</h3>
       <div class="item-main-row">
-        <label>Price
-          <i></i>
-        </label>
-        <span class="text-ellipsis">：
-          <i style="color:#f95;font-size:22px;">$ {{item.price | money}}</i>
+        <label>Price <i></i> </label>
+        <span class="text-ellipsis"
+          >：
+          <i style="color:#f95;font-size:22px;">$ {{ item.price | money }}</i>
         </span>
       </div>
       <div class="item-main-row">
-        <label>Score
-          <i></i>
-        </label>
-        <span class="text-ellipsis">：
+        <label>Score <i></i> </label>
+        <span class="text-ellipsis"
+          >：
           <Rate :value="item.score" disabled />
         </span>
       </div>
       <div class="item-main-row">
-        <label>Picking time
-          <i></i>
-        </label>
-        <span class="text-ellipsis">：{{item.date | dateFormat('yyyy-MM-dd hh:mm')}}</span>
+        <label>Picking time <i></i> </label>
+        <span class="text-ellipsis"
+          >：{{ item.date | dateFormat("yyyy-MM-dd hh:mm") }}</span
+        >
       </div>
       <div class="item-main-row">
-        <label>Picking place
-          <i></i>
-        </label>
-        <span class="text-ellipsis">：{{item.place}}</span>
+        <label>Picking place <i></i> </label>
+        <span class="text-ellipsis">：{{ item.place }}</span>
       </div>
       <div class="item-main-row">
-        <label>Introduction
-          <i></i>
-        </label>
-        <span class="text-ellipsis">：{{item.content}}</span>
+        <label>Introduction <i></i> </label>
+        <span class="text-ellipsis">：{{ item.content }}</span>
       </div>
       <div v-if="infoBtn" class="item-main-row" style="padding-top:8px">
-        <Button type="warning" @click="$router.push({name:'Info',query:{id:item.id}})">View details</Button>
+        <Button
+          type="warning"
+          @click="$router.push({ name: 'Info', query: { id: item.id } })"
+          >View details</Button
+        >
       </div>
     </div>
   </div>
@@ -70,7 +83,7 @@ export default {
   },
   methods: {
     toInfo(item) {
-      if (item.author!=this.$store.state.users.id) {
+      if (item.author != this.$store.state.users.id) {
         this.$router.push({
           name: "PersonHome",
           query: { userId: item.author }
@@ -149,23 +162,23 @@ export default {
 .foo-item-image p {
   font-size: 14px;
   color: #323232;
- 
- line-height: 40px;
+
+  line-height: 40px;
 }
 .food-item {
-.food-col-p-center {
-  display: flex;
-  align-items: center;
-  padding: 5px 0;   
-  img {
-    width: 40px;
-    height: 40px;
-    border-radius: 50px;
-    background-color: #f5f5f5;
-    border: 1px solid #f5f5f5;
-    margin-right: 5px;
-    overflow: hidden;
+  .food-col-p-center {
+    display: flex;
+    align-items: center;
+    padding: 5px 0;
+    img {
+      width: 40px;
+      height: 40px;
+      border-radius: 50px;
+      background-color: #f5f5f5;
+      border: 1px solid #f5f5f5;
+      margin-right: 5px;
+      overflow: hidden;
+    }
   }
-}
 }
 </style>

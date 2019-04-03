@@ -2,40 +2,92 @@
   <div class="home">
     <!-- headers -->
     <div class="home-header">
-      <div class="home-add" @click="$router.push({name:'Post'})">
-        <img src="@/resource/add.svg" alt="">
+      <div class="home-add" @click="onAddPost">
+        <img src="@/resource/add.svg" alt="" />
       </div>
-      <div class="home-search" @mouseout="onSeachMouseout" @mouseover="onSeachMouseover">
-        <Input clearable v-model="params.name" @on-enter="onSearchBox" @on-click="onSearchBox" @click.native="isSearch=true" prefix="ios-search" @on-focus="onSearchFocus" class="home-search-input" size="large" placeholder="" />
+      <div
+        class="home-search"
+        @mouseout="onSeachMouseout"
+        @mouseover="onSeachMouseover"
+      >
+        <Input
+          clearable
+          v-model="params.name"
+          @on-enter="onSearchBox"
+          @on-click="onSearchBox"
+          @click.native="isSearch = true"
+          prefix="ios-search"
+          @on-focus="onSearchFocus"
+          class="home-search-input"
+          size="large"
+          placeholder=""
+        />
         <div v-show="isSearch" class="home-search-list">
           <Form :label-width="50">
             <FormItem label="flavor" style="margin-bottom:10px">
-              <Tag @click.native="onTagSelect('flavor',item.val)" :color="getIsActive('flavor',item.val,flavorList)" v-for="item in flavorList" :key="item.val">{{item.text}}</Tag>
+              <Tag
+                @click.native="onTagSelect('flavor', item.val)"
+                :color="getIsActive('flavor', item.val, flavorList)"
+                v-for="item in flavorList"
+                :key="item.val"
+                >{{ item.text }}</Tag
+              >
             </FormItem>
             <FormItem label="dislike" style="margin-bottom:10px">
-              <Tag @click.native="onTagSelect('dislike',item.val)" :color="getIsActive('dislike',item.val,dislikeList)" v-for="item in dislikeList" :key="item.val">{{item.text}}</Tag>
+              <Tag
+                @click.native="onTagSelect('dislike', item.val)"
+                :color="getIsActive('dislike', item.val, dislikeList)"
+                v-for="item in dislikeList"
+                :key="item.val"
+                >{{ item.text }}</Tag
+              >
             </FormItem>
           </Form>
         </div>
       </div>
       <div class="home-header-right">
-        <Avatar :src="$store.state.users.image_url" @click.native="$router.push({name:'Person'})" icon="ios-person" size="large" />
+        <Avatar
+          :src="$store.state.users.image_url"
+          @click.native="$router.push({ name: 'Person' })"
+          icon="ios-person"
+          size="large"
+        />
         <span class="logo">Foodish</span>
       </div>
     </div>
     <!-- list -->
     <div class="home-list clearfix">
       <div class="home-col">
-        <FoodCol v-if="index%4===0" v-for="(item,index) in list" :key="item.id" :item="item" />
+        <FoodCol
+          v-if="index % 4 === 0"
+          v-for="(item, index) in list"
+          :key="item.id"
+          :item="item"
+        />
       </div>
       <div class="home-col">
-        <FoodCol v-if="index%4===1" v-for="(item,index) in list" :key="item.id" :item="item" />
+        <FoodCol
+          v-if="index % 4 === 1"
+          v-for="(item, index) in list"
+          :key="item.id"
+          :item="item"
+        />
       </div>
       <div class="home-col">
-        <FoodCol v-if="index%4===2" v-for="(item,index) in list" :key="item.id" :item="item" />
+        <FoodCol
+          v-if="index % 4 === 2"
+          v-for="(item, index) in list"
+          :key="item.id"
+          :item="item"
+        />
       </div>
       <div class="home-col">
-        <FoodCol v-if="index%4===3" v-for="(item,index) in list" :key="item.id" :item="item" />
+        <FoodCol
+          v-if="index % 4 === 3"
+          v-for="(item, index) in list"
+          :key="item.id"
+          :item="item"
+        />
       </div>
     </div>
   </div>
@@ -102,6 +154,18 @@ export default {
         this.isSearch = false;
       }, 300);
     },
+    async onAddPost() {
+      const { isStop } = this.$store.state.users;
+      if (isStop) {
+        this.$Modal.info({
+          title: "Tips",
+          content:
+            "Because someone has reported you, you can't trade for the time being."
+        });
+        return;
+      }
+      this.$router.push({ name: "Post" });
+    },
     async getList() {
       let params = { is_cancel: false };
       if (this.params.name) {
@@ -125,6 +189,8 @@ export default {
         } else {
           return 1;
         }
+      }).filter(item=>{
+        return !item.is_cancel
       });
     }
   }

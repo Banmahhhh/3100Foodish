@@ -163,6 +163,11 @@ export default {
         });
         this.$store.commit("users", { token, ...list[0] });
         this.$Message.success("login successfully");
+        if(this.forms.username==='administrator1@gmail.com'||this.forms.username==='administrator2@gmail.com'){
+          return this.$router.replace({
+             name: "AdminHome"
+          });
+        }
         this.$router.replace({
           name: "Home"
         });

@@ -3,7 +3,7 @@
     <div>
       <img
         style="width:100%"
-        :src="item.image_url"
+        :src="item.food_image_url"
         alt=""
         @click="$router.push({ name: 'Info', query: { id: item.id } })"
       />
@@ -15,22 +15,19 @@
       </p>
       <Rate :value="item.score" disabled />
       <div class="item-main-row">
-        <label
-          >Picking time
-          <i></i>
-        </label>
+        <label>Picking time <i></i> </label>
         <span class="text-ellipsis"
           >：{{ item.date | dateFormat("yyyy-MM-dd hh:mm") }}</span
         >
       </div>
       <div class="item-main-row">
-        <label
-          >Picking place
-          <i></i>
-        </label>
+        <label>Picking place <i></i> </label>
         <span class="text-ellipsis">：{{ item.place }}</span>
       </div>
-      <Progress :percent="(item.book_now/item.max_book)*100" status="active">
+      <Progress
+        :percent="(item.book_now / item.max_book) * 100"
+        status="active"
+      >
         {{ item.book_now }}/{{ item.max_book }}
       </Progress>
       <div v-if="infoBtn" style="padding-top:8px;text-align:center">
@@ -48,9 +45,7 @@
       </div>
     </div>
     <div class="food-col-footer">
-      <p class="food-col-p-center">
-        {{ item.nickname || "" }}
-      </p>
+      <p class="food-col-p-center">{{ item.nickname || "" }}</p>
     </div>
   </div>
 </template>

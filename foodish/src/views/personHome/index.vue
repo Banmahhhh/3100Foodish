@@ -1,7 +1,7 @@
 <template>
   <div class="person">
     <div class="person-header">
-      <div class="person-left" @click="$router.push({ name: 'Home' })">
+      <div class="person-left" @click="$router.go(-1)">
         <img src="@/resource/fanhui.svg" alt="" />
       </div>
       <span>Foodish</span>
@@ -21,14 +21,12 @@
             <p style="font-size:14px">{{last_name}}</p>
             <p>
               <Button type="warning" size="small" @click="onFollow(is_follow)">{{is_follow?'cancel follow':'follow'}}</Button>
+              &nbsp;&nbsp;&nbsp;
+              <Button type="warning" size="small" @click="onSendMessage">send private message</Button>
             </p>
           </div>
         </div>
         <div style="padding-top:0">
-          <div class="not-data" v-if="foodList.length === 0">
-            <img src="../../resource/745077899322453353.jpg" />
-            <p>It is empty. Add something to it now!</p>
-          </div>
           <FoodItemSmall :align="`${index % 2 !== 0 ? 'right' : 'left'}`" v-for="(item, index) in foodList" :key="item.id" :item="item" />
         </div>
       </div>
@@ -51,6 +49,16 @@
         <Button @click="onCommitAdd" type="warning">ok</Button>
       </div>
     </Modal>
+    <!-- 发送消息 -->
+    <Modal :value="isNotify" @on-cancel="isNotify = false" title="send notify" :styles="{ width: '500px' }">
+      <div class="modal-wrap">
+        <Input type="textarea" v-model="notifyText" :rows="10" placeholder="notify"></Input>
+      </div>
+      <div slot="footer" class="modal-footer">
+        <Button @click="isNotify = false">cancel</Button>
+        <Button @click="onNotifySubmit" type="warning">ok</Button>
+      </div>
+    </Modal>
   </div>
 </template>
 
@@ -63,6 +71,8 @@ export default {
       active: 0,
       commitId: "",
       isCommit: false,
+      isNotify:false,
+      notifyText:"",
       image_url: "",
       last_name:"",
       score: 0,
@@ -208,7 +218,7 @@ export default {
       const { data } = await this.$http({
         url: this.API.FOOD_LIST,
         params: {
-          auther: this.$route.query.userId
+          author: this.$route.query.userId
         }
       });
       this.foodList = data.sort((a, b) => {
@@ -217,6 +227,8 @@ export default {
         } else {
           return 1;
         }
+      }).filter(item=>{
+        return !item.is_cancel
       });
       this.foodList = this.foodList.filter(item => {
         return +new Date() >= item.date;
@@ -266,7 +278,34 @@ export default {
       //刷新列表
       this.getBookInfo();
       this.$Message.success("Evaluation success!");
-    }
+    },
+    onSendMessage(){
+        this.notifyText = ""
+        this.isNotify=true
+    },
+    async onNotifySubmit(){
+        if(!this.notifyText){
+            return this.$Message.info("Content cannot be empty")
+        }
+        await this.createNotify({
+            text:this.notifyText,
+            creater:this.$store.state.users.id,
+            listener:this.$route.query.userId
+        })
+        this.isNotify=false
+        this.$Message.success("Send successfully")
+    },
+    async createNotify({ text, creater, listener }) {
+      await this.$http({
+        url: this.API.NOTIFY,
+        method: "post",
+        data: {
+          text,
+          creater,
+          listener
+        }
+      });
+    },
   }
 };
 </script>

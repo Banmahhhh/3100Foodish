@@ -2,22 +2,21 @@
   <div class="commit-item">
     <div class="commit-item-row">
       <span class="commit-av-wrap" style="font-size:14px;color:#323232"
-        ><img class="commit-av" :src="item.image_url" />{{
+        ><img class="commit-av" :src="user.image_url" />{{
           user.name || user.nickname || user.username
         }}</span
       >
-      <Rate :value="item.score" disabled />
     </div>
     <div class="commit-item-row">
       <span style="font-size:12px;color:#999">{{
-        item.post_date | dateFormat
+        item.created_time | dateFormat
       }}</span>
     </div>
     <div
       class="commit-item-row"
       style="padding:10px 0;font-size:14px;color:#323232"
     >
-      {{ item.description }}
+      {{ item.text }}
     </div>
   </div>
 </template>
@@ -43,15 +42,12 @@ export default {
     };
   },
   created() {
-    try {
-      this.food = JSON.parse(this.item.food_detail);
-    } catch (error) {}
     this.getUserInfo();
   },
   methods: {
     async getUserInfo() {
       const { data } = await this.$http({
-        url: this.API.USER_D_INFO(this.item.auther)
+        url: this.API.USER_D_INFO(this.item.creater)
       });
       this.user = data;
     }
