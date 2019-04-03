@@ -185,6 +185,7 @@ export default {
       const list = [...this.foodList,...this.bookList]
       return this.bookList
         .map(item => {
+          console.log(item)
           const food_detail = item.food_detail;
           if (food_detail) {
             if (d - food_detail.date <= dayTime && !food_detail.is_cancel) {
@@ -207,9 +208,12 @@ export default {
 
             //
           }
+          
         })
-        .concat(this.foodList)
+        
         .map((item)=>{
+          console.log(item)
+          if(!item)return
           const text="you need to cook it"
           if (!item.is_cancel) {
               return {
@@ -230,6 +234,7 @@ export default {
             }
         })
         .filter(item => {
+          if(!item)return false
           if(+new Date()<=item.date) {
             return true
           }

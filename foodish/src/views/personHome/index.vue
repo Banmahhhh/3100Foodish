@@ -188,11 +188,7 @@ export default {
           auther: this.$route.query.userId
         }
       });
-      let score = 0;
-      data.map(item => {
-        score += item.score;
-      });
-      this.score = score / data.length;
+      
       this.commitList = data;
     },
     async getUserInfo() {
@@ -233,6 +229,13 @@ export default {
       this.foodList = this.foodList.filter(item => {
         return +new Date() >= item.date;
       });
+      let score = 0;
+      let len=0
+      this.foodList.filter(item=>item.date<+new Date()).filter(item=>!item.is_cancel).map(item => {
+        score += item.score;
+        len++;
+      });
+      this.score = score / len;
     },
     async getBookInfo() {
       const { data } = await this.$http({
