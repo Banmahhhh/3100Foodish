@@ -54,7 +54,7 @@
       </Form>
     </div>
     <div class="text-modal" v-if="isShow">
-      <span style="color:#f95;font-size:100px">Weell Done!</span>
+      <span style="color:#f95;font-size:100px">Well Done!</span>
     </div>
   </div>
 </template>
@@ -81,22 +81,22 @@ export default {
       flavor: [],
       dislike: [],
       rules: {
-        image_url: Rules.required("the is required"),
-        name: Rules.required("the is required"),
-        price: Rules.number("the is required", {
+        image_url: Rules.required("this is required"),
+        name: Rules.required("this is required"),
+        price: Rules.number("this is required", {
           min: 1
         }),
-        place: Rules.required("the is required"),
+        place: Rules.required("this is required"),
         date: {
           type: "date",
           required: true,
-          message: "the is required",
+          message: "this is required",
           trigger: "change"
         },
-        max_book: Rules.number("the is required", {
+        max_book: Rules.number("this is required", {
           min: 1
         }),
-        content: Rules.required("the is required")
+        content: Rules.required("this is required")
       },
       flavorList: [],
       dislikeList: [],
