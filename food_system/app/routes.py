@@ -9,8 +9,13 @@ from werkzeug.urls import url_parse
 from app.forms import RegistrationForm, DishForm, OrderForm, SearchBox, EditProfileForm, CommentForm
 from datetime import datetime
 from app.forms import MessageForm
-from app.models import Message, Notification
+from app.models import Message, Notification, Image
 from flask import jsonify
+import json
+import random
+from datetime import datetime
+from flask import Response
+
 
 @app.route('/', methods=['GET', 'POST'])
 @app.route('/index', methods=['GET', 'POST'])
@@ -269,4 +274,212 @@ def rating(order_id):
         chef.rating=ratings/cnt
     db.session.commit()
     return redirect(url_for('view_order',order_id=order_id))
-     
+
+
+@app.route('/api/userregister/', methods=['POST'])
+def userregister():
+    data = request.data
+    data = json.loads(data)
+    username=data['username']
+    password=data['password']
+    user = User(username=username)
+    user.set_password(password)
+    db.session.add(user)
+    db.session.commit()
+    return Response(status=201)
+
+
+@app.route('/logintoken/', methods=['POST'])
+def logintoken():
+    data={"token":'abc'}
+    return jsonify(data)
+
+
+@app.route('/api/users/<id>/', methods=['GET','PATCH'])
+def users(id):
+    user = User.query.filter_by(id=int(id)).first()
+    if request.method == 'PATCH':
+        data = request.data
+        data = json.loads(data)
+        last_name= data.get('last_name')
+        image_url= data.get('image_url')
+        if last_name is not None:
+            user.username=last_name
+        if image_url is not None:
+            user.image_url=image_url
+        db.session.commit()
+    else:
+        data=user.encode_partial()
+    response = Response(json.dumps(data), mimetype='application/json')
+    return response
+
+@app.route('/api/users/', methods=['GET'])
+def list_users():
+    username=request.args.get("username")
+    users = User.query.filter_by(username=username).all()
+    data=[]
+    for user in users:
+        data.append(user.encode_all())
+    response = Response(json.dumps(data), mimetype='application/json')
+    return response
+
+@app.route('/api/books/', methods=['GET','POST'])
+def books():
+    if request.method == 'POST':
+        data = request.data
+        data = json.loads(data)
+        dish_id = data['food']
+        user_id = data['user']
+        buyer = User.query.filter_by(id=int(user_id)).first()
+        dish = Dish.query.filter_by(id=int(dish_id)).first()
+        order = Order(quantity=0,
+        status="ongoing", dish=dish, buyer=buyer)
+        dish.current_order_number+=1
+        db.session.add(order)
+        db.session.commit()
+    else:
+        user_id=request.args.get('user')
+        data=[]
+        buyer = User.query.filter_by(id=int(user_id)).first()
+        orders = Order.query.filter_by(buyer=buyer).all()
+        for order in orders:
+            data.append(order.encode_book())
+    response = Response(json.dumps(data), mimetype='application/json')
+    return response
+    
+
+@app.route('/api/books/<id>/', methods=['DELETE'])
+def delete_books(id):
+    data=request.data
+    order = Order.query.filter_by(id=int(id)).first()
+    db.session.delete(order)
+    db.session.commit()
+    response = Response(data, mimetype='application/json')
+    return response
+
+@app.route('/api/foods/', methods=['GET', 'POST'])
+def post_foods():
+    if request.method == 'POST':
+        data = request.data
+        data = json.loads(data)
+        image_url=data['image_url']
+        name=data['name']
+        price=data['price']
+        place=data['place']
+        date=data['date']
+        max_book=data['max_book']
+        content=data['content']
+        book_now=data['book_now']
+        diet=data['diet']
+        style=data['style']
+        author=data['author']
+
+        chef = User.query.filter_by(id = int(author)).first()
+        dish = Dish(dish_name=name, 
+        price=float(price),
+        photo=image_url, 
+        expected_order_number=int(max_book),
+        deliveryTime=date,
+        current_order_number=int(book_now),
+        flavour=style, 
+        potential_taboo=diet, 
+        description=content,
+        pick_up_location=place, 
+        seller=chef)
+        db.session.add(dish)
+        db.session.commit()
+    else:
+        dataDict = request.data
+        dataDict = json.loads(dataDict)
+        chef_id = dataDict['author']
+        chef = User.query.filter_by(id=int(chef_id)).first()
+        data=[]
+        dishes = Dish.query.filter_by(seller=chef).all()
+        for dish in dishes:
+            data.append(dish.encode())
+    response = Response(json.dumps(data), mimetype='application/json')
+    return response
+    
+@app.route('/api/foods/<id>/', methods=['GET','PUT'])
+def foods(id):
+    dish = Dish.query.filter_by(id = int(id)).first()
+    if request.method == 'PUT':
+        data = request.data
+        data = json.loads(data)
+        db.session.delete(dish)
+        db.session.commit()
+    else:
+        data=dish.encode()
+    response = Response(json.dumps(data), mimetype='application/json')
+    return response
+
+
+
+
+
+@app.route('/api/comments/', methods=['GET', 'POST'])
+def comments():
+    if request.method == 'POST':
+        data = request.data
+        data = json.loads(data)
+        description=data['description']
+        score=data['score']
+        auther=data['auther']
+        food=data['food']
+        dish = Dish.query.filter_by(id = int(food)).first()
+        user = User.query.filter_by(id = int(auther)).first()
+        order = Order.query.filter_by(dish=dish, buyer=user).first()
+        order.comment=description
+        order.rating=int(score)
+        db.session.commit()
+    else:
+        food=request.args.get('food')
+        dish = Dish.query.filter_by(id = int(food)).first()
+        orders = Order.query.filter_by(dish=dish).all()
+        data=[]
+        for order in orders:
+            data.append(order.encode_comment())
+    response = Response(json.dumps(data), mimetype='application/json')
+    return response
+
+@app.route('/<name>', methods=['GET'])
+def get_img(name):
+    img = Image.query.filter_by(image_name= name).first()
+    data= img.image_data
+    response = Response(data, mimetype='application/octet-stream')
+    return response
+
+@app.route('/upload/image/', methods=['POST'])
+def images():
+    f = request.files['img']
+    image_data=request.data
+    name=f.filename
+    image = Image(image_name = name, image_data=image_data)
+    db.session.add(image)
+    db.session.commit()
+    data = {'url': name}
+    response = Response(json.dumps(data), mimetype='application/json', status=201)
+    return response
+
+@app.route('/api/recommend/', methods=['GET', 'POST'])
+def recommend():
+    dishes=Dish.query.all()
+    dishes=random.choices(dishes)
+    data=[]
+    for dish in dishes:
+        data.append(dish.encode())
+    response = Response(json.dumps(data), mimetype='application/json')
+    return response
+
+
+
+
+
+
+    
+    
+   
+    
+    
+    
+    
